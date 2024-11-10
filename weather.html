@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Information</title>
+    <link rel="stylesheet" href="weather.css">
+</head>
+<body>
+    <div class="weather-container">
+        <h1 id="cityName"></h1>
+        <img id="weatherIcon" class="weather-icon" alt="Weather Icon">
+        <p id="condition"></p>
+        <p id="temperature"></p>
+        <p id="wind"></p>
+        <p id="humidity"></p>
+    </div>
+
+    <script>
+        async function getWeatherData(city) {
+            const url = `https://weatherapi-com.p.rapidapi.com/current.json?q=${city}`;
+            const options = {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': '7b1a2341c5mshcb628c51000805ap18b3c8jsn3794d531e8e3',
+                    'x-rapidapi-host': 'weatherapi-com.p.rapidapi.com'
+                }
+            };
+
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                
+                document.getElementById('cityName').textContent = result.location.name;
+                document.getElementById('condition').textContent = result.current.condition.text;
+                document.getElementById('temperature').textContent = `Temperature: ${result.current.temp_c}°C`;
+                document.getElementById('wind').textContent = `Wind: ${result.current.wind_kph} kph`;
+                document.getElementById('humidity').textContent = `Humidity: ${result.current.humidity}%`;
+                document.getElementById('weatherIcon').src = `https:${result.current.condition.icon}`;
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
+        }
+
+        // Extract city name from URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const city = urlParams.get('city');
+        
+        // Call the function to get weather data for the specified city
+        getWeatherData(city);
+    </script>
+</body>
+</html>
